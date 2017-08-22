@@ -1,0 +1,46 @@
+.main-panel{
+	background-color: #4CAF50;
+	width:50px;
+	height: 50px;
+	padding: 80px;
+	margin: 0 auto;
+	border-radius: 10px;
+}
+
+.symbol-panel{
+	margin-left:110px;
+	margin-top: -140px;
+}
+
+.symbol-btns{
+	padding: 6px;
+	width: 50px;
+	margin: 2px;
+	color: white;
+	background-color: #43703e;
+}
+
+.symbol-label{
+	backgroun-color: white;
+}
+
+.equal-btn{
+	width: 30px;
+	background-color: #1a7adb;
+	padding: 6px;
+	margin: 2px;
+}
+
+.number-btns{
+	padding: 6px;
+	width: 30px;
+	margin: 2px;
+}
+
+.answers-header{
+	background-color: yellow;
+}
+
+
+
+
