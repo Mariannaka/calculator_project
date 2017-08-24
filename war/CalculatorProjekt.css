@@ -22,6 +22,7 @@
 
 .symbol-label{
 	backgroun-color: white;
+	text-align: centetr;
 }
 
 .equal-btn{
@@ -39,6 +40,9 @@
 
 .answers-header{
 	background-color: yellow;
+}
+.answers-table {
+	backgroun-color: #e4e5b0;
 }
 
 

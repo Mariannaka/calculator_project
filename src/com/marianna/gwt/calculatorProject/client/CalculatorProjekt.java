@@ -9,9 +9,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -31,7 +29,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class CalculatorProjekt implements EntryPoint {
 	
-	private Label helloCalc = new Label("Hello Calc");
   private VerticalPanel mainPanel = new VerticalPanel();
   private HorizontalPanel addPanel = new HorizontalPanel();
   private HorizontalPanel panel123 = new HorizontalPanel();
@@ -40,10 +37,8 @@ public class CalculatorProjekt implements EntryPoint {
   private HorizontalPanel panel0 = new HorizontalPanel();
   private HorizontalPanel clearPanel = new HorizontalPanel();
   private VerticalPanel symbolPanel = new VerticalPanel();
-  //private String[] calcSymbols = new String[] { "/", "x", "-", "+", "=" };
-  //private Button[] calcSymbolBtns = new Button[calcSymbols.length];
-  private FlexTable calcFlexTable = new FlexTable();
-  private FlexTable numbersHolder = new FlexTable();
+  //private FlexTable calcFlexTable = new FlexTable();
+  //private FlexTable numbersHolder = new FlexTable();
   private TextBox answerOutput = new TextBox();
   private Button one = new Button("1");
   private Button two = new Button("2");
@@ -65,12 +60,14 @@ public class CalculatorProjekt implements EntryPoint {
   private Button clear = new Button("Clear");
   private TextBox firstNumber = new TextBox();
   private TextBox secondNumber = new TextBox();
-  private Label symbolLabel = new Label("SYMBOLS");
-  private String[] symbolsArray = new String[] { "/", "x", "-", "+", "=" };
-  private Button[] numbersBtn = new Button[10];
+  private Label symbolLabel = new Label("");
+  //private String[] symbolsArray = new String[] { "/", "x", "-", "+", "=" };
+  //private Button[] numbersBtn = new Button[10];
   private HorizontalPanel numberPanel = new HorizontalPanel();
   private int textBoxFocus = 0;
   double firstIndex, secondIndex, answer;
+  //private String finalAnswer = NumberFormat.getFormat("#####.#####").format(answer);
+  //private NumberFormat finalAnswer = NumberFormat.getDecimalFormat();
   private FlexTable answersTable = new FlexTable();
   private ArrayList<String> answers = new ArrayList<String>();
   
@@ -220,6 +217,16 @@ public class CalculatorProjekt implements EntryPoint {
 				}
 				}
 		}); 
+		
+		point.addClickHandler(new ClickHandler() {
+			public void onClick (ClickEvent event) {
+				if (textBoxFocus == 1) {
+				firstNumber.setValue(firstNumber.getValue() + ".");
+				} else if (textBoxFocus == 2) {
+					secondNumber.setValue(secondNumber.getValue() + ".");
+				}
+				}
+		}); 
 	
 		
 		minus.addClickHandler(new ClickHandler() {
@@ -246,9 +253,21 @@ public class CalculatorProjekt implements EntryPoint {
 			}
 	    });
 	    
+	    modulo.addClickHandler(new ClickHandler() {
+			public void onClick (ClickEvent event) {
+				 calculateModulo();
+			}
+	    });
+	    
 	    equal.addClickHandler(new ClickHandler() {
 			public void onClick (ClickEvent event) {
 				calculateEqual();
+			}
+	    });
+	    
+	    clear.addClickHandler(new ClickHandler() {
+			public void onClick (ClickEvent event) {
+				clear();
 			}
 	    });
 	    
@@ -291,7 +310,7 @@ public class CalculatorProjekt implements EntryPoint {
 		  zero.setStyleName("number-btns");
 		  point.setStyleName("number-btns");
 		  equal.setStyleName("equal-btn");
-		  answersTable.setStyleName("answers-flex-table");
+		  answersTable.setStyleName("answers-table");
 		  symbolLabel.addStyleName("symbol-label");
 		  clearPanel.setStyleName("clear-panel");
 		  answersTable.getRowFormatter().addStyleName(0, "answers-header");
@@ -302,6 +321,7 @@ public class CalculatorProjekt implements EntryPoint {
 		  firstNumber.setPixelSize(50, 15);
 		  secondNumber.setPixelSize(50, 15);
 		  answerOutput.setPixelSize(50, 15);
+		  symbolLabel.setPixelSize(25, 15);
 		  addPanel.add(firstNumber);
 		  addPanel.add(symbolLabel);
 		  addPanel.add(secondNumber);
@@ -312,8 +332,8 @@ public class CalculatorProjekt implements EntryPoint {
 		  symbolPanel.add(divide);
 		  symbolPanel.add(times);
 		  symbolPanel.add(modulo);
-		  answersTable.setText(0, 0, "Operation");
-		  answersTable.setText(0, 1, "answer");
+		  answersTable.setText(0, 0, "O p e r a t i o n");
+		  answersTable.setText(0, 1, "A n s w e r");
 		    
 	    // TODO Assemble Main panel.
 		  //mainPanel.add(numberPanel);
@@ -332,8 +352,7 @@ public class CalculatorProjekt implements EntryPoint {
 		    //mainPanel.add(addPanel);
 	    // TODO Associate the Main panel with the HTML host page.
 		  RootPanel.get("greatCalculator").add(mainPanel); 
-		  RootPanel.get().add(helloCalc);
-		    RootPanel.get("calc").add(mainPanel);
+ 		    RootPanel.get("calc").add(mainPanel);
 		    RootPanel.get("calc").add(new Label("TESSSST"));    
 
 }
@@ -346,7 +365,9 @@ public class CalculatorProjekt implements EntryPoint {
 		 } else {
 		 answer = firstIndex + secondIndex;
 		 }
-		 answerOutput.setValue(Double.toString(answer));
+		 String finalAnswer = NumberFormat.getFormat("####.####").format(answer);
+		 answerOutput.setValue(finalAnswer);
+		 calculateEqual();
 	}
 	
 	private void calculateDivide() {
@@ -362,7 +383,9 @@ public class CalculatorProjekt implements EntryPoint {
 				 } else {
 				 answer = firstIndex / secondIndex;
 				 }
-				 answerOutput.setValue(String.valueOf(answer));
+		 String finalAnswer = NumberFormat.getFormat("####.####").format(answer);
+		 answerOutput.setValue(finalAnswer);
+		 calculateEqual();
    }
 	
 	
@@ -375,7 +398,9 @@ public class CalculatorProjekt implements EntryPoint {
 			 } else {
 			 answer = firstIndex - secondIndex;
 			 }
-		 answerOutput.setValue(String.valueOf(answer));
+		  String finalAnswer = NumberFormat.getFormat("####.####").format(answer);
+		 answerOutput.setValue(finalAnswer);
+		 calculateEqual();
    }
 	
 	private void calculateMultiply() {
@@ -383,18 +408,41 @@ public class CalculatorProjekt implements EntryPoint {
 	 secondIndex = Double.parseDouble(secondNumber.getText());
 	 symbolLabel.setText("*");
 		  if (firstIndex == 0 || secondIndex == 0) {
-				 Window.alert("You have an empty field");
-			 } else {
-			 answer = firstIndex * secondIndex;
-			 }
-		 answerOutput.setValue(String.valueOf(answer));
+			  Window.alert("You have an empty field");
+			  } else { answer = firstIndex * secondIndex; }
+		  String finalAnswer = NumberFormat.getFormat("####.####").format(answer);
+		 answerOutput.setValue(finalAnswer);
+		 calculateEqual();
    }
+	
+	private void calculateModulo() {
+		int firstMod, secondMod, answerMod;
+		firstMod = Integer.parseInt(firstNumber.getText());
+		secondMod = Integer.parseInt(secondNumber.getText());
+		answerMod = firstMod % secondMod;
+		answerOutput.setValue(String.valueOf(answerMod));
+		calculateEqual();
+	}
+	
+	
 	
 	private void calculateEqual() {
     	int row = answersTable.getRowCount();
-    	answers.add(Double.toString(answer));
+    	String finalAnswer = NumberFormat.getFormat("####.####").format(answer);
+    	answers.add(finalAnswer);
+    	if (symbolLabel.getText()=="%") {
+    	Integer.parseInt(answerOutput.getValue());
+    	} else if (symbolLabel.getText()=="/" || (symbolLabel.getText()=="-") 
+    			|| (symbolLabel.getText()=="+" || (symbolLabel.getText()=="*"))) {
+    		finalAnswer = String.valueOf(answerOutput.getValue());
+    	}
+    	
     	answersTable.setText(row,0, (firstNumber.getText()+symbolLabel.getText()+secondNumber.getText()));
-    	answersTable.setText(row,1, Double.toString(answer));
+    	answersTable.setText(row,1, finalAnswer);
 }
+	
+	private void clear() {
+		answersTable.removeAllRows();
+	}
 	
 }
